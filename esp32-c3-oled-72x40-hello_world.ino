@@ -40,6 +40,13 @@ U8G2_SH1106_72X40_WISE_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE, 6, 5);
 
 int width = 72;
 int height = 40;
+
+const int ledPin = 8;  // the number of the LED pin
+int ledState = LOW;  // ledState used to set the LED
+unsigned long previousMillis = 0;  // will store last time LED was updated
+const long interval = 1000;  // interval at which to blink (milliseconds)
+
+
 void setup(void)
 {
      delay(1000);
@@ -47,6 +54,7 @@ void setup(void)
      u8g2.setContrast(255); // set contrast to maximum 
      u8g2.setBusClock(400000); //400kHz I2C 
      u8g2.setFont(u8g2_font_ncenB10_tr);
+     pinMode(ledPin, OUTPUT);
 }
 
 void loop(void)
@@ -56,4 +64,19 @@ void loop(void)
     u8g2.setCursor(15, 25);
     u8g2.printf("%dx%d", width, height);
     u8g2.sendBuffer(); // transfer internal memory to the display
+    
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= interval) {
+      // save the last time you blinked the LED
+      previousMillis = currentMillis;
+
+      // if the LED is off turn it on and vice-versa:
+      if (ledState == LOW) {
+        ledState = HIGH;
+      } else {
+        ledState = LOW;
+      }
+      // set the LED with the ledState of the variable:
+      digitalWrite(ledPin, ledState);
+    }
 }
